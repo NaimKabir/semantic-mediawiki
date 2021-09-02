@@ -5,26 +5,45 @@ load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 
 # Semantic MediaWiki set-up
 container_run_and_commit(
-    name = "semantic_mediawiki",
-    image = "@mediawiki//image",
+    name = "installs",
+    image = "@mediawiki-linux-amd64//image",
     # Install pre-reqs: https://www.semantic-mediawiki.org/wiki/Help:Installation#Environment
     # Install Composer and deps: https://www.semantic-mediawiki.org/wiki/Help:Using_Composer
     # Install Semantic MediaWiki using Composer: https://www.semantic-mediawiki.org/wiki/Help:Installation/Using_Composer_with_MediaWiki_1.25%2B
     commands = [ 
-		"apt-get update",
-		"apt-get install libpcre3", 
-		"curl -sS https://getcomposer.org/installer | php",
-		"php composer.phar install", # Install Composer deps
-		"touch composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
-		"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki",
-		"php composer.phar update -n --prefer-stable --no-dev", # Update w/ stable deps; suppress interactive prompts
+	"apt-get update",
+	"apt-get install libpcre3", 
+	"apt-get install unzip zip", 
+	"curl -sS https://getcomposer.org/installer | php",
+	"php composer.phar install", # Install Composer deps
+	"echo {} > composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
+	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki",
+	"php composer.phar update -n --no-dev", # Update w/ deps; suppress interactive prompts
     ],
 )
 
+
 # Wiki container to release
+
 container_image(
-    name = "release",
-    base = ":semantic_mediawiki",
+    name = "release-container",
+    base = ":installs",
 )
 
-# TODO: Write a container test that checks `mbstring` is enabled
+# TODO: Write a container tests to check for:
+# mbstring being enabled, installation success, annotation usage. See: https://www.semantic-mediawiki.org/wiki/Help:Verify_the_installation
+
+container_run_and_commit(
+    name = "test-setup",
+    image = ":release-container.tar",
+    commands = [ 
+	"php maintenance/install.php my_wiki admin --dbname my_wiki --pass a-nice-password --dbtype sqlite --server 'http://localhost:8080' --scriptpath '' ",
+	"chown www-data:www-data data data/*",
+	'echo "enableSemantics(localhost:8080)" >> LocalSettings.php',
+    ],
+)
+
+container_image(
+    name = "test-container",
+    base = ":test-setup",
+)

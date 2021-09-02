@@ -31,9 +31,9 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 # https://www.semantic-mediawiki.org/wiki/Help:Compatibility
 
 container_pull(
-    name = "mediawiki",
+    name = "mediawiki-linux-amd64",
     registry = "index.docker.io",
     repository = "library/mediawiki",
-    digest = "sha256:70b5e1904602e36d29132db56afb3462f2f83d6516066f14db2894ca50cf7d52" # mediawiki:legacy, linux/386
+    digest = "sha256:996dd16efe204eaa7bfa1d104f549976d3becb7a3e96501fc9fdd6089f776e21" # mediawiki:legacy, linux/amd64
 )
 
