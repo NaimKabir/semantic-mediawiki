@@ -3,19 +3,28 @@ package(default_visibility=["//visibility:public"])
 load("@io_bazel_rules_docker//container:container.bzl", "container_image")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 
-# Wiki container
-container_image(
-    name = "wiki",
-    base = "@mediawiki//image",
+# Semantic MediaWiki set-up
+container_run_and_commit(
+    name = "semantic_mediawiki",
+    image = "@mediawiki//image",
+    # Install pre-reqs: https://www.semantic-mediawiki.org/wiki/Help:Installation#Environment
+    # Install Composer and deps: https://www.semantic-mediawiki.org/wiki/Help:Using_Composer
+    # Install Semantic MediaWiki using Composer: https://www.semantic-mediawiki.org/wiki/Help:Installation/Using_Composer_with_MediaWiki_1.25%2B
+    commands = [ 
+		"apt-get update",
+		"apt-get install libpcre3", 
+		"curl -sS https://getcomposer.org/installer | php",
+		"php composer.phar install", # Install Composer deps
+		"touch composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
+		"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki",
+		"php composer.phar update -n --prefer-stable --no-dev", # Update w/ stable deps; suppress interactive prompts
+    ],
 )
 
-# # Mediawiki container set-up
-# container_run_and_commit(
-#     name = "wiki_base",
-#     image = "@mediawiki//image",
-#     # Install the Semantic MediaWiki extensions
-#     commands = [
-# 		    "apt-get update",
-#     ],
-# )
+# Wiki container to release
+container_image(
+    name = "release",
+    base = ":semantic_mediawiki",
+)
 
+# TODO: Write a container test that checks `mbstring` is enabled
