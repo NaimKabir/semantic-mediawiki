@@ -1,6 +1,7 @@
 package(default_visibility=["//visibility:public"])
 
 load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 
 # Semantic MediaWiki set-up
@@ -39,11 +40,17 @@ container_run_and_commit(
     commands = [ 
 	"php maintenance/install.php my_wiki admin --dbname my_wiki --pass a-nice-password --dbtype sqlite --server 'http://localhost:8080' --scriptpath '' ",
 	"chown www-data:www-data data data/*",
-	'echo "enableSemantics(localhost:8080)" >> LocalSettings.php',
+	"echo 'enableSemantics(localhost:8080)' >> LocalSettings.php",
     ],
 )
 
 container_image(
     name = "test-container",
     base = ":test-setup",
+)
+
+container_test(
+    name = "requirements-test",
+    configs = ["tests/requirements.yaml"],
+    image = ":test-container",
 )
