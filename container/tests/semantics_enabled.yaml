@@ -13,3 +13,15 @@ commandTests:
       - "--testsuite"
       - "semantic-mediawiki-structure"
     exitCode: 0
+  - name: "semantic-mediawiki-check"
+    command: "php"
+    args: 
+      - "composer.phar"
+      - "phpunit"
+      - "-n"
+      - "-d"
+      - "extensions/SemanticMediaWiki"
+      - "--" 
+      - "--testsuite"
+      - "semantic-mediawiki-check"
+    exitCode: 0
