@@ -9,7 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 TEMPLATES_DIR = "templates"
 
 
-def get_template_render(path: str) -> str:
+def render(path: str) -> str:
     """
     Render a Jinja2 template to actual text, using macros in scope.
 

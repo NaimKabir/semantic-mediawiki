@@ -34,6 +34,6 @@ container_pull(
     name = "mediawiki-linux-amd64",
     registry = "index.docker.io",
     repository = "library/mediawiki",
-    digest = "sha256:996dd16efe204eaa7bfa1d104f549976d3becb7a3e96501fc9fdd6089f776e21" # mediawiki:legacy, linux/amd64
+    digest = "sha256:996dd16efe204eaa7bfa1d104f549976d3becb7a3e96501fc9fdd6089f776e21" # mediawiki:1.35.3, linux/amd64
 )
 

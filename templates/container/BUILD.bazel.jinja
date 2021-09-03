@@ -14,7 +14,7 @@ container_run_and_commit(
     # Install Semantic MediaWiki using Composer: https://www.semantic-mediawiki.org/wiki/Help:Installation/Using_Composer_with_MediaWiki_1.25%2B
     commands = [ 
 	"apt-get update",
-	"apt-get install libpcre3=2:{{ versions.LIBPCRE3_VERSION }}", 
+	"apt-get install libpcre3={{ versions.LIBPCRE3_VERSION }}", 
 	"apt-get install unzip={{ versions.UNZIP_VERSION }} zip={{ versions.ZIP_VERSION }}", 
 	"curl -sS https://getcomposer.org/installer | php",
 	"php composer.phar install", # Install Composer deps
