@@ -38,9 +38,16 @@ container_run_and_commit(
     name = "test-setup",
     image = ":release-container.tar",
     commands = [ 
+	# Run an install of MediaWiki.
+	# Bazel creates a bunch of root-owned containers that we have to manually chown back to a user:group 
+	# that lets the Docker host access test SQLite files
 	"php maintenance/install.php my_wiki admin --dbname my_wiki --pass a-nice-password --dbtype sqlite --server 'http://localhost:8080' --scriptpath '' ",
 	"chown www-data:www-data data data/*",
-	"echo 'enableSemantics(localhost:8080)' >> LocalSettings.php",
+	# Enable Semantic MediaWiki and then update MediaWiki to deal with the upgrade
+	"echo 'enableSemantics();' >> LocalSettings.php",
+	"php maintenance/update.php",
+	# Enable testing by installing dev deps
+	"php composer.phar install --dev",
     ],
 )
 
@@ -50,7 +57,10 @@ container_image(
 )
 
 container_test(
-    name = "requirements-test",
-    configs = ["tests/requirements.yaml"],
+    name = "test",
+    configs = [
+	"tests/requirements.yaml",
+	"tests/semantics_enabled.yaml",
+    ],
     image = ":test-container",
 )
