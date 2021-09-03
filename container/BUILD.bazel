@@ -1,6 +1,6 @@
 package(default_visibility=["//visibility:public"])
 
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 
@@ -63,4 +63,15 @@ container_test(
 	"tests/semantics_enabled.yaml",
     ],
     image = ":test-container",
+)
+
+# Deploy to docker hub if tests pass
+
+container_push(
+    name = "push",
+    image = ":release-container",
+    registry = "index.docker.io",
+    repository = "naimkabir/semantic-mediawiki",
+    tag = "3.2.3",
+    format = "Docker",
 )

@@ -1,7 +1,12 @@
 schemaVersion: '2.0.0'
 
 commandTests:
-  - name: "mbstring_enabled"
+  - name: "php-version"
+    command: "php"
+    args: 
+      - -v
+    expectedOutput: ["7.4.[0-9]+"]
+  - name: "mbstring-enabled"
     command: "php"
     args: 
       - -r
