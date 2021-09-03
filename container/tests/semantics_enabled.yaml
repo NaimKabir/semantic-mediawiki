@@ -1,7 +1,7 @@
 schemaVersion: '2.0.0'
 
 commandTests:
-  - name: "semantic_wiki_enabled"
+  - name: "semantic-mediawiki-structure"
     command: "php"
     args: 
       - "composer.phar"
