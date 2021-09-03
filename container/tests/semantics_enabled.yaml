@@ -10,6 +10,6 @@ commandTests:
       - "-d"
       - "extensions/SemanticMediaWiki"
       - "--" 
-      - "--filter"
-      - "testIsClassifiedAsImportPerformerProtected_CreatorAndCurrentUserDontMatch"
+      - "--testsuite"
+      - "semantic-mediawiki-structure"
     exitCode: 0
