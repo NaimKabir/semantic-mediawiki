@@ -68,10 +68,11 @@ container_test(
 # Deploy to docker hub if tests pass
 
 container_push(
-    name = "push",
+    name = "release",
     image = ":release-container",
     registry = "index.docker.io",
     repository = "naimkabir/semantic-mediawiki",
     tag = "3.2.3",
+    skip_unchanged_digest = True,
     format = "Docker",
 )
