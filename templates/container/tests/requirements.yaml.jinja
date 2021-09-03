@@ -1,0 +1,15 @@
+{%- import "versions.jinja" as versions -%}
+schemaVersion: '2.0.0'
+
+commandTests:
+  - name: "php-version"
+    command: "php"
+    args: 
+      - -v
+    expectedOutput: ["{{ versions.PHP_VERSION }}"]
+  - name: "mbstring-enabled"
+    command: "php"
+    args: 
+      - -r
+      - "echo extension_loaded('mbstring');"
+    expectedOutput: ["1"]

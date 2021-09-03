@@ -1,0 +1,28 @@
+{%- import "versions.jinja" as versions -%}
+schemaVersion: '2.0.0'
+
+commandTests:
+  - name: "semantic-mediawiki-structure"
+    command: "php"
+    args: 
+      - "composer.phar"
+      - "phpunit"
+      - "-n"
+      - "-d"
+      - "extensions/SemanticMediaWiki"
+      - "--" 
+      - "--testsuite"
+      - "semantic-mediawiki-structure"
+    exitCode: 0
+  - name: "semantic-mediawiki-check"
+    command: "php"
+    args: 
+      - "composer.phar"
+      - "phpunit"
+      - "-n"
+      - "-d"
+      - "extensions/SemanticMediaWiki"
+      - "--" 
+      - "--testsuite"
+      - "semantic-mediawiki-check"
+    exitCode: 0
