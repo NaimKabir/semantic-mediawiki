@@ -1,0 +1,10 @@
+name: test-on-push
+on: [push]
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt update && sudo apt install bazel
+      - run: sudo apt update && sudo apt full-upgrade
+      - run: bazel test //...
