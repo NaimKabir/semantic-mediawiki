@@ -54,6 +54,8 @@ The test suites I run are:
   
 I exclude some tests that are failing on Semantic MediaWiki master, but my testing should at the very least help protect against regressions. For details on what tests are run (and which are hackily excluded), you can check out the `container/tests` directory.
   
+You can run them with: `bazel test //...`. This will require Bazel, which I like installing with [Bazelisk](https://github.com/bazelbuild/bazelisk).
+  
 In addition I also do some basic checks for loaded extensions and proper dependency versions.
 </details>
 
