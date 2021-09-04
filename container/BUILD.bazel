@@ -80,7 +80,7 @@ container_push(
 # Also release a pre-configured Demo container so people can just play around
 
 container_push(
-    name = "demo-release",
+    name = "demo",
     image = ":test-container",
     registry = "index.docker.io",
     repository = "naimkabir/semantic-mediawiki",
