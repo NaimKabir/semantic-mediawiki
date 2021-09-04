@@ -11,7 +11,7 @@ Reach out for support [@kabircreates](https://twitter.com/KabirCreates), or post
 
 A lot of the installation mess is abstracted away in released Docker images, but unfortunately there's still a lot to do after pulling one.
 
-If you want to just play around with a pre-configured, SQLite-based *minimal* install, you can pull a [demo image](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki/tags?page=1&ordering=last_updated&name=demo). It's not recommended that you deploy it anywhere without properly load testing it. 
+If you want to just play around with a pre-configured, SQLite-based *minimal* install and skip these steps, you can pull a [demo image](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki/tags?page=1&ordering=last_updated&name=demo). It's not recommended that you deploy it anywhere without properly load testing it. 
 
 
 1. **Pull an image** from the repository. e.g with: `docker pull naimkabir/semantic-mediawiki:3.2.3`
