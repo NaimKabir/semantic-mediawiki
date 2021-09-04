@@ -26,7 +26,9 @@ If you want to just play around with a pre-configured, SQLite-based *minimal* in
 ## Updating Versions
 
 <details>
-The primary purpose of this repo is to release containers with stable installations of Semantic Media Wiki for each release. We also want to use the latest acceptable versions of all dependent software.
+  
+  
+The primary purpose of this repo is to release containers with stable installations of Semantic Media Wiki for each release. We also want to use the latest acceptable versions of all dependencies.
 
 This is currently done via a janky-but-functional method of software version-tracking and rebuilding Docker containers. If you see that one of these dependencies is out-of-date, you can follow these steps to release a new container to [**DockerHub**](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki):
 
@@ -37,4 +39,21 @@ This is currently done via a janky-but-functional method of software version-tra
 5. Push your branch with this repo as the upstream source, and open a Pull Request (PR). This will trigger tests. If they pass and the PR is approved, it will be merged to master. Upon merge, a new container will be built and released.
 </details>
 
+## Tests
+
+<details>
+  
+  
+To ensure a correct install I run `phpunit` tests that come packaged with the Semantic MediaWiki install.
+
+The test suites I run are:
+1. `semantic-mediawiki-unit`
+2. `semantic-mediawiki-integration`
+3. `semantic-mediawiki-check`
+4. `semantic-mediawiki-structure`
+  
+I exclude some tests that are failing on Semantic MediaWiki master, but my testing should at the very least help protect against regressions. For details on what tests are run (and which are hackily excluded), you can check out the `container/tests` directory.
+  
+In addition I also do some basic checks for loaded extensions and proper dependency versions.
+</details>
 
