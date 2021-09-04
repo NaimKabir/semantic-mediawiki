@@ -11,6 +11,8 @@ Reach out for support [@kabircreates](https://twitter.com/KabirCreates), or post
 
 A lot of the installation mess is abstracted away in released Docker images, but unfortunately there's still a lot to do after pulling one.
 
+If you want to just play around with a pre-configured, SQLite-based *minimal* install, you can pull a [demo image](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki/tags?page=1&ordering=last_updated&name=demo). It's not recommended that you deploy it anywhere without properly load testing it. 
+
 
 1. **Pull an image** from the repository. e.g with: `docker pull naimkabir/semantic-mediawiki:3.2.3`
 2. **Run the image** in order to stand up the MediaWiki instance. e.g with: `docker run --name smw -d -p 8080:80 naimkabir/semantic-mediawiki:3.2.3`. By default, the port MediaWiki talks on is port 80, and we map a host port to it.
@@ -28,8 +30,8 @@ This is currently done via a janky-but-functional method of software version-tra
 
 1. Clone this repo: `git clone https://github.com/NaimKabir/semantic-mediawiki.git`.
 2. Checkout a new branch. 
-3. In your branch, update version in `versions.jinja` in the directory root.
-4. In your branch, run `./update_version.py` in the directory root. When you `git diff` you should see relevant changes. This step will require you to install python dependencies, e.g with `pip install -r requirements.txt`.
+3. In your branch, update versions in `versions.jinja` in the directory root.
+4. In your branch, run `./update_versions.py` in the directory root. When you `git diff` you should see relevant changes. This step will require you to install python dependencies, e.g with `pip install -r requirements.txt`.
 5. Push your branch with this repo as the upstream source, and open a Pull Request (PR). This will trigger tests. If they pass and the PR is approved, it will be merged to master. Upon merge, a new container will be built and released.
 </details>
 

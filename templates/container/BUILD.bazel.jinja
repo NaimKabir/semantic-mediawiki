@@ -77,3 +77,15 @@ container_push(
     skip_unchanged_digest = True,
     format = "Docker",
 )
+
+# Also release a pre-configured Demo container so people can just play around
+
+container_push(
+    name = "demo",
+    image = ":test-container",
+    registry = "index.docker.io",
+    repository = "naimkabir/semantic-mediawiki",
+    tag = "demo",
+    skip_unchanged_digest = True,
+    format = "Docker",
+)
