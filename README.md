@@ -26,6 +26,8 @@ If you want to just play around with a pre-configured, SQLite-based *minimal* in
 ## Updating Versions
 
 <details>
+  
+  
 The primary purpose of this repo is to release containers with stable installations of Semantic Media Wiki for each release. We also want to use the latest acceptable versions of all dependencies.
 
 This is currently done via a janky-but-functional method of software version-tracking and rebuilding Docker containers. If you see that one of these dependencies is out-of-date, you can follow these steps to release a new container to [**DockerHub**](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki):
@@ -40,6 +42,8 @@ This is currently done via a janky-but-functional method of software version-tra
 ## Tests
 
 <details>
+  
+  
 To ensure a correct install I run `phpunit` tests that come packaged with the Semantic MediaWiki install.
 
 The test suites I run are:
