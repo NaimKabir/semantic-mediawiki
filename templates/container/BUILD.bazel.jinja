@@ -17,6 +17,7 @@ container_run_and_commit(
 	"apt-get install libpcre3={{ versions.LIBPCRE3_VERSION }}", 
 	"apt-get install unzip={{ versions.UNZIP_VERSION }} zip={{ versions.ZIP_VERSION }}", 
 	"curl -sS https://getcomposer.org/installer | php",
+	"php composer.phar self-update {{ versions.COMPOSER_VERSION }}", # Pin composer version
 	"php composer.phar install", # Install Composer deps
 	"echo {} > composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
 	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:{{ versions.SEMANTIC_MEDIAWIKI_VERSION }}",
