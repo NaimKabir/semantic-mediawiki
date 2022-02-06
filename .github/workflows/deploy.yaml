@@ -26,5 +26,8 @@ jobs:
       - name: Run tests
         run: bazel test //...
 
-      - name: Deploying 
-        run: bazel run //...
+      - name: Deploying current release
+        run: bazel run //container:release
+
+      - name: Deploying Demo container
+        run: bazel run //container:demo
