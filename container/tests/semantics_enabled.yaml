@@ -9,7 +9,7 @@ commandTests:
     command: "php"
     args: 
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
@@ -21,7 +21,7 @@ commandTests:
     command: "php"
     args: 
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
@@ -33,7 +33,7 @@ commandTests:
     command: "php"
     args: 
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
@@ -48,7 +48,7 @@ commandTests:
     command: "php"
     args:
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
