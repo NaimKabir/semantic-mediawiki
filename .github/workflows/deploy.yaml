@@ -39,5 +39,8 @@ jobs:
       - name: Deploying current release
         run: bazel run //container:release
 
+      - name: Deploying current release with default tag
+        run: bazel run //container:release-latest
+
       - name: Deploying Demo container
         run: bazel run //container:demo
