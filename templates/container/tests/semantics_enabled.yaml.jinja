@@ -1,6 +1,10 @@
 {%- import "versions.jinja" as versions -%}
 schemaVersion: '2.0.0'
 
+globalEnvVars:
+  - key: "MW_INSTALL_PATH"
+    value: "/var/www/html"
+
 commandTests:
   - name: "semantic-mediawiki-structure"
     command: "php"
