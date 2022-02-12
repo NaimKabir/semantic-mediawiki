@@ -9,6 +9,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Bazel cache
+        id: bazel-cache
+        uses: actions/cache@v2
+        env:
+          version: 4.2.1
+        with:
+          path: | 
+            ~/.cache/bazel
+          key: ${{ runner.os }}-{{ env.version }}-bazel-cache
+
       - name: Install bazelisk
         run: |
           curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.1.0/bazelisk-linux-amd64"
