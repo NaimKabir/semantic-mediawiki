@@ -19,7 +19,7 @@ If you want to just play around with a pre-configured, SQLite-based *minimal* in
 1. **Pull an image** from the repository. e.g with: `docker pull naimkabir/semantic-mediawiki:3.2.3`
 2. **Run the image** in order to stand up the MediaWiki instance. e.g with: `docker run --name smw -d -p 8080:80 naimkabir/semantic-mediawiki:3.2.3`. By default, the port MediaWiki talks on is port 80, and we map a host port to it.
 3. **Configure MediaWiki** by either going through the [MediaWiki installer process](https://www.mediawiki.org/wiki/Manual:Config_script), or by `docker cp`ing in a `LocalSettings.php` that you already have available. You can also `docker exec` into a running container to run a manual install.
-4. **Enable semantics!** You must add a line to `LocalSettings.php` that looks like: `wfLoadExtension('SemanticMediaWiki'); enableSemantics('{YOUR_WIKI_SERVER}'};`.
+4. **Enable semantics!** You must add a line to `LocalSettings.php` that looks like: `enableSemantics('{YOUR_WIKI_SERVER}');`.
 5. **Run maintenance.** As with all MediaWiki upgrades, you must run maintenance with `php maintenance/update.php` in the root directory of the MediaWiki project.
 6. **Verify the install.** You should be good to go, but you can follow [these steps](https://www.semantic-mediawiki.org/wiki/Help:Verify_the_installation) to verify a correct install.
 
