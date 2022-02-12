@@ -13,11 +13,11 @@ jobs:
       - name: Bazel cache
         id: bazel-cache
         uses: actions/cache@v2
+        env:
+          version: 4.2.1
         with:
           path: | 
             ~/.cache/bazel
-          env:
-            version: 4.2.1
           key: ${{ runner.os }}-{{ env.version }}-bazel-cache
 
       - name: Login to Docker Hub
