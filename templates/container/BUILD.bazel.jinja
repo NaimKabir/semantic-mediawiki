@@ -79,6 +79,16 @@ container_push(
     format = "Docker",
 )
 
+container_push(
+    name = "release-latest",
+    image = ":release-container",
+    registry = "index.docker.io",
+    repository = "naimkabir/semantic-mediawiki",
+    tag = "latest",
+    skip_unchanged_digest = True,
+    format = "Docker",
+)
+
 # Also release a pre-configured Demo container so people can just play around
 
 container_push(
