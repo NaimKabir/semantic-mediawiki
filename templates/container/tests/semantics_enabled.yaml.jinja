@@ -1,12 +1,16 @@
 {%- import "versions.jinja" as versions -%}
 schemaVersion: '2.0.0'
 
+globalEnvVars:
+  - key: "MW_INSTALL_PATH"
+    value: "/var/www/html"
+
 commandTests:
   - name: "semantic-mediawiki-structure"
     command: "php"
     args: 
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
@@ -18,7 +22,7 @@ commandTests:
     command: "php"
     args: 
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
@@ -26,32 +30,34 @@ commandTests:
       - "--testsuite"
       - "semantic-mediawiki-check"
     exitCode: 0
+{#
   - name: "semantic-mediawiki-unit"
     command: "php"
-    args: 
+    args:
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
-      - "--" 
+      - "--"
       - "--testsuite"
       - "semantic-mediawiki-unit"
       - "--filter"
-      - "^((?!ScopeMemoryLimiterTest::testExecute|CsvFileExportPrinterTest::testLink|ProtectionValidatorTest::testIsClassifiedAsImportPerformerProtected_CreatorAndCurrentUserDontMatch|TemplateFileExportPrinterTest::testLink).)*$" 
+      - "^((?!ScopeMemoryLimiterTest::testExecute|CsvFileExportPrinterTest::testLink|ProtectionValidatorTest::testIsClassifiedAsImportPerformerProtected_CreatorAndCurrentUserDontMatch|TemplateFileExportPrinterTest::testLink).)*$"
     exitCode: 0
 
   - name: "semantic-mediawiki-integration"
     command: "php"
     args:
       - "composer.phar"
-      - "phpunit"
+      - "test"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
-      - "--" 
+      - "--"
       - "--testsuite"
       - "semantic-mediawiki-integration"
       - "--filter"
-      - "^((?!testRdfSerializationForInterwikiAnnotation|JSONScriptTestCaseRunnerTest::testCaseFile|testPageCreationAndRevisionHandlingBeforeLinksUpdate|testPreprocessTemplateAndParse|ScopeMemoryLimiterTest::testExecute|CsvFileExportPrinterTest::testLink|TemplateFileExportPrinterTest::testLink|testIsClassifiedAsImportPerformerProtected_CreatorAndCurrentUserDontMatch|DumpRDFTest::testRun|TitleMoveCompleteIntegrationTest::testPageMoveWithCreationOfRedirectTarget|TitleMoveCompleteIntegrationTest::testPageMoveWithRemovalOfOldPage|UpdateJobRoundtripTest::testPageMoveTriggersUpdateJob|RdfFileResourceTest::testFileUploadForDummyTextFile|RedirectTargetFinderIntegrationTest::testRedirectParseUsingMoveToPage|ComparatorFilterConditionQueryDBIntegrationTest::testTextConjunctionConstraints).)*$" 
+      - "^((?!testRdfSerializationForInterwikiAnnotation|JSONScriptTestCaseRunnerTest::testCaseFile|testPageCreationAndRevisionHandlingBeforeLinksUpdate|testPreprocessTemplateAndParse|ScopeMemoryLimiterTest::testExecute|CsvFileExportPrinterTest::testLink|TemplateFileExportPrinterTest::testLink|testIsClassifiedAsImportPerformerProtected_CreatorAndCurrentUserDontMatch|DumpRDFTest::testRun|TitleMoveCompleteIntegrationTest::testPageMoveWithCreationOfRedirectTarget|TitleMoveCompleteIntegrationTest::testPageMoveWithRemovalOfOldPage|UpdateJobRoundtripTest::testPageMoveTriggersUpdateJob|RdfFileResourceTest::testFileUploadForDummyTextFile|RedirectTargetFinderIntegrationTest::testRedirectParseUsingMoveToPage|ComparatorFilterConditionQueryDBIntegrationTest::testTextConjunctionConstraints).)*$"
     exitCode: 0
+#}
