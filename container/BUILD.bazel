@@ -19,7 +19,7 @@ container_run_and_commit(
 	"php composer.phar self-update 2.1.14", # Pin composer version
 	"php composer.phar install", # Install Composer deps
 	"echo {} > composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
-	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:3.2.3",
+	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:4.0.0",
 	"php composer.phar update -n --no-dev", # Update w/ deps; suppress interactive prompts
     ],
 )
@@ -45,6 +45,9 @@ container_run_and_commit(
 	"php maintenance/install.php my_wiki admin --dbname my_wiki --pass a-nice-password --dbtype sqlite --server 'http://localhost:8080' --scriptpath '' ",
 	"chown www-data:www-data data data/*",
 	# Enable Semantic MediaWiki and then update MediaWiki to deal with the upgrade
+	"echo 'wfLoadExtension(<<<END' >> LocalSettings.php",
+	"echo 'SemanticMediaWiki' >> LocalSettings.php",
+	"echo 'END);' >> LocalSettings.php",
 	"echo 'enableSemantics();' >> LocalSettings.php",
 	"php maintenance/update.php",
 	# Enable testing by installing dev deps
@@ -73,7 +76,7 @@ container_push(
     image = ":release-container",
     registry = "index.docker.io",
     repository = "naimkabir/semantic-mediawiki",
-    tag = "3.2.3",
+    tag = "4.0.0",
     skip_unchanged_digest = True,
     format = "Docker",
 )

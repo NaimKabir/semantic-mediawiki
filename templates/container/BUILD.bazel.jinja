@@ -46,6 +46,9 @@ container_run_and_commit(
 	"php maintenance/install.php my_wiki admin --dbname my_wiki --pass a-nice-password --dbtype sqlite --server 'http://localhost:8080' --scriptpath '' ",
 	"chown www-data:www-data data data/*",
 	# Enable Semantic MediaWiki and then update MediaWiki to deal with the upgrade
+	"echo 'wfLoadExtension(<<<END' >> LocalSettings.php",
+	"echo 'SemanticMediaWiki' >> LocalSettings.php",
+	"echo 'END);' >> LocalSettings.php",
 	"echo 'enableSemantics();' >> LocalSettings.php",
 	"php maintenance/update.php",
 	# Enable testing by installing dev deps
