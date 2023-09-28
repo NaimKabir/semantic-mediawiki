@@ -59,20 +59,3 @@ You can run them with: `bazel test //...`. This will require Bazel, which I like
 In addition I also do some basic checks for loaded extensions and proper dependency versions.
 </details>
 
-## Note
-
-* with bazel 6.3.2 when running the below is errors out
-
-```bash
-bazel test //...
-ERROR: /home/brody/.cache/bazel/_bazel_brody/2318e702975a887bc84c4d382ff0c38a/external/bazel_tools/platforms/BUILD:59:6: in alias rule @bazel_tools//platforms:osx: Constraints from @bazel_tools//platforms have been removed. Please use constraints from @platforms repository embedded in Bazel, or preferably declare dependency on https://github.com/bazelbuild/platforms. See https://github.com/bazelbuild/bazel/issues/8622 for details.
-ERROR: /home/brody/.cache/bazel/_bazel_brody/2318e702975a887bc84c4d382ff0c38a/external/bazel_tools/platforms/BUILD:59:6: Analysis of target '@bazel_tools//platforms:osx' failed
-ERROR: /home/brody/workspace/github/semantic-mediawiki/container/BUILD.bazel:96:15: While resolving toolchains for target //container:demo: invalid registered toolchain '@io_bazel_rules_docker//toolchains/docker:default_osx_toolchain': 
-ERROR: Analysis of target '//container:demo' failed; build aborted: 
-INFO: Elapsed time: 0.634s
-INFO: 0 processes.
-FAILED: Build did NOT complete successfully (2 packages loaded, 21 targets configured)
-    currently loading: @bazel_tools//tools/cpp ... (2 packages)
-ERROR: Couldn't start the build. Unable to run tests
- ```
-
