@@ -1,7 +1,6 @@
 name: pr 
 on: 
-  pull_request:
-      types: [opened, reopened, edited]
+  - push
 jobs:
   test:
     runs-on: ubuntu-latest
