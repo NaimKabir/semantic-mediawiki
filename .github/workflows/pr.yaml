@@ -1,7 +1,6 @@
 name: pr 
 on: 
-  pull_request:
-      types: [opened, reopened]
+  - push
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -11,7 +10,7 @@ jobs:
 
       - name: Bazel cache
         id: bazel-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           version: 4.2.1
         with:
@@ -27,4 +26,4 @@ jobs:
           chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
 
       - name: Run tests
-        run: bazel test //...
+        run: USE_BAZEL_VERSION="7.6.1" bazel test //...
