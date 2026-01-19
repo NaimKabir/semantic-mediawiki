@@ -19,7 +19,7 @@ container_run_and_commit(
 	"php composer.phar self-update 2.1.14", # Pin composer version
 	"php composer.phar install", # Install Composer deps
 	"echo {} > composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
-	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:5.0.1",
+	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:6.0.1",
 	"php composer.phar update -n --no-dev", # Update w/ deps; suppress interactive prompts
     ],
 )
@@ -76,7 +76,7 @@ container_push(
     image = ":release-container",
     registry = "index.docker.io",
     repository = "naimkabir/semantic-mediawiki",
-    tag = "5.0.1",
+    tag = "6.0.1",
     skip_unchanged_digest = True,
     format = "Docker",
 )
