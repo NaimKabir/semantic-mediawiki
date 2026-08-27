@@ -34,13 +34,13 @@ jobs:
           chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
 
       - name: Run tests
-        run: USE_BAZEL_VERSION="7.6.1" bazel test //...
+        run: bazel test //...
 
       - name: Deploying current release
-        run: USE_BAZEL_VERSION="7.6.1" bazel run //container:release
+        run: bazel run //container:release
 
       - name: Deploying current release with default tag
-        run: USE_BAZEL_VERSION="7.6.1" bazel run //container:release-latest
+        run: bazel run //container:release-latest
 
       - name: Deploying Demo container
-        run: USE_BAZEL_VERSION="7.6.1" bazel run //container:demo
+        run: bazel run //container:demo

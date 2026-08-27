@@ -10,6 +10,55 @@ http_archive(
     sha256 = "1f4e59843b61981a96835dc4ac377ad4da9f8c334ebe5e0bb3f58f80c09735f4",
     strip_prefix = "rules_docker-0.19.0",
     urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.19.0/rules_docker-v0.19.0.tar.gz"],
+    # Make container_run_and_commit work with Docker's containerd image store,
+    # where loaded images are not addressable by their config digest.
+    patches = ["//third_party:rules_docker_containerd_store.patch"],
+    patch_args = ["-p1"],
+)
+
+# rules_docker is archived and the GCS bucket it downloads its prebuilt
+# puller/loader helper binaries from (storage.googleapis.com/rules_docker)
+# is gone (403). Declaring these repositories before container_repositories()
+# makes it skip its own (broken) http_file definitions, using our vendored
+# binaries instead. See third_party/rules_docker_bin/README.md.
+local_repository(
+    name = "go_puller_darwin",
+    path = "third_party/rules_docker_bin/go_puller_darwin",
+)
+
+local_repository(
+    name = "go_puller_linux_amd64",
+    path = "third_party/rules_docker_bin/go_puller_linux_amd64",
+)
+
+local_repository(
+    name = "go_puller_linux_arm64",
+    path = "third_party/rules_docker_bin/go_puller_linux_arm64",
+)
+
+local_repository(
+    name = "go_puller_linux_s390x",
+    path = "third_party/rules_docker_bin/go_puller_linux_s390x",
+)
+
+local_repository(
+    name = "loader_darwin",
+    path = "third_party/rules_docker_bin/loader_darwin",
+)
+
+local_repository(
+    name = "loader_linux_amd64",
+    path = "third_party/rules_docker_bin/loader_linux_amd64",
+)
+
+local_repository(
+    name = "loader_linux_arm64",
+    path = "third_party/rules_docker_bin/loader_linux_arm64",
+)
+
+local_repository(
+    name = "loader_linux_s390x",
+    path = "third_party/rules_docker_bin/loader_linux_s390x",
 )
 
 load(
@@ -34,6 +83,6 @@ container_pull(
     name = "mediawiki-linux-amd64",
     registry = "index.docker.io",
     repository = "library/mediawiki",
-    digest = "sha256:889541d5c6d56158d5821e12fb9355879d1e2b5c6a2372597e4b54ddae0c246e" # mediawiki:1.45.1, linux/amd64
+    digest = "sha256:c4f5d7dcccfbf22204f05fadb8e08515dccd8bd97ed854d77e64f25e5cc21d6e" # mediawiki:1.46.0, linux/amd64
 )
 
