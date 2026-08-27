@@ -1,0 +1,20 @@
+--- a/docker/util/commit.sh.tpl
++++ b/docker/util/commit.sh.tpl
+@@ -17,7 +17,16 @@
+ 
+ # Load the image and remember its name
+ image_id=$(%{image_id_extractor_path} %{image_tar})
+-$DOCKER $DOCKER_FLAGS load -i %{image_tar}
++load_output=$($DOCKER $DOCKER_FLAGS load -i %{image_tar})
++echo "$load_output"
++# Under Docker's containerd image store, images loaded from a tarball are not
++# addressable by their config digest (the id the extractor computes), so prefer
++# whatever name `docker load` reports (a repo tag, or an image id both stores
++# understand).
++loaded_name=$(printf '%s\n' "$load_output" | sed -n -e 's/^Loaded image ID: //p' -e 's/^Loaded image: //p' | head -n 1)
++if [[ -n "$loaded_name" ]]; then
++  image_id="$loaded_name"
++fi
+ 
+ id=$($DOCKER $DOCKER_FLAGS run -d %{docker_run_flags} $image_id %{commands})
+ # Actually wait for the container to finish running its commands

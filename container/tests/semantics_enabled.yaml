@@ -4,28 +4,31 @@ globalEnvVars:
   - key: "MW_INSTALL_PATH"
     value: "/var/www/html"
 
+# NOTE: as of SMW 7, the composer "test" script runs the full lint/phpcs/phan
+# battery (whose tools aren't installed here), so run the "phpunit" script
+# with a --testsuite filter instead.
 commandTests:
   - name: "semantic-mediawiki-structure"
     command: "php"
-    args: 
+    args:
       - "composer.phar"
-      - "test"
+      - "phpunit"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
-      - "--" 
+      - "--"
       - "--testsuite"
       - "semantic-mediawiki-structure"
     exitCode: 0
   - name: "semantic-mediawiki-check"
     command: "php"
-    args: 
+    args:
       - "composer.phar"
-      - "test"
+      - "phpunit"
       - "-n"
       - "-d"
       - "extensions/SemanticMediaWiki"
-      - "--" 
+      - "--"
       - "--testsuite"
       - "semantic-mediawiki-check"
     exitCode: 0

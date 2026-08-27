@@ -16,10 +16,10 @@ A lot of the installation mess is abstracted away in released Docker images, but
 If you want to just play around with a pre-configured, SQLite-based *minimal* install and skip these steps, you can pull a [demo image](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki/tags?page=1&ordering=last_updated&name=demo). It's not recommended that you deploy it anywhere without properly load testing it. 
 
 
-1. **Pull an image** from the repository. e.g with: `docker pull naimkabir/semantic-mediawiki:3.2.3`
-2. **Run the image** in order to stand up the MediaWiki instance. e.g with: `docker run --name smw -d -p 8080:80 naimkabir/semantic-mediawiki:3.2.3`. By default, the port MediaWiki talks on is port 80, and we map a host port to it.
+1. **Pull an image** from the repository. e.g with: `docker pull naimkabir/semantic-mediawiki:7.2.1`
+2. **Run the image** in order to stand up the MediaWiki instance. e.g with: `docker run --name smw -d -p 8080:80 naimkabir/semantic-mediawiki:7.2.1`. By default, the port MediaWiki talks on is port 80, and we map a host port to it.
 3. **Configure MediaWiki** by either going through the [MediaWiki installer process](https://www.mediawiki.org/wiki/Manual:Config_script), or by `docker cp`ing in a `LocalSettings.php` that you already have available. You can also `docker exec` into a running container to run a manual install.
-4. **Enable semantics!** You must add a line to `LocalSettings.php` that looks like: `wfLoadExtension('SemanticMediaWiki'); enableSemantics('{YOUR_WIKI_SERVER}');`. Note: pre-SMW 4.0.0 you should only add `enableSemantics('{YOUR_WIKI_SERVER}')`.
+4. **Enable semantics!** You must add a line to `LocalSettings.php` that looks like: `wfLoadExtension('SemanticMediaWiki');`. Note: as of SMW 4.0.0 and up to SMW 7.0.0 you should also add `enableSemantics('{YOUR_WIKI_SERVER}');` after it (deprecated and unnecessary from 7.0.0 onward); pre-SMW 4.0.0 you should only add `enableSemantics('{YOUR_WIKI_SERVER}')`.
 5. **Run maintenance.** As with all MediaWiki upgrades, you must run maintenance with `php maintenance/update.php` in the root directory of the MediaWiki project.
 6. **Verify the install.** You should be good to go, but you can follow [these steps](https://www.semantic-mediawiki.org/wiki/Help:Verify_the_installation) to verify a correct install.
 
@@ -54,7 +54,9 @@ The test suites I run are:
   
 I exclude some tests that are failing on Semantic MediaWiki master, but my testing should at the very least help protect against regressions. For details on what tests are run (and which are hackily excluded), you can check out the `container/tests` directory.
   
-You can run them with: `bazel test //...`. This will require Bazel, which I like installing with [Bazelisk](https://github.com/bazelbuild/bazelisk).
+You can run them with: `bazel test //...`. This will require Bazel, which I like installing with [Bazelisk](https://github.com/bazelbuild/bazelisk) (the version is pinned in `.bazelversion`).
+
+Note: the `//container:test` target needs a Docker daemon using the classic image store (as on CI). With Docker Desktop's containerd image store enabled, rules_docker's incremental image loader fails (`failed to resolve layers`) because the containerd store doesn't support loading partial tarballs that reference already-known layers; either disable the containerd image store in Docker Desktop settings, or run the test suites manually inside the image (e.g. `docker run --rm -e MW_INSTALL_PATH=/var/www/html --entrypoint php <test-image> composer.phar phpunit -n -d extensions/SemanticMediaWiki -- --testsuite semantic-mediawiki-structure`).
   
 In addition I also do some basic checks for loaded extensions and proper dependency versions.
 </details>

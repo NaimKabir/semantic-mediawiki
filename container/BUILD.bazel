@@ -13,13 +13,14 @@ container_run_and_commit(
     # Install Semantic MediaWiki using Composer: https://www.semantic-mediawiki.org/wiki/Help:Installation/Using_Composer_with_MediaWiki_1.25%2B
     commands = [ 
 	"apt-get update",
-	"apt-get install libpcre3=2:8.39-13", 
-	"apt-get install unzip=6.0-26 zip=3.0-12", 
+	# NOTE: libpcre3 is no longer installed: the pcre3 package was removed from Debian trixie,
+	# and PHP has bundled PCRE2 since 7.3, which is what Semantic MediaWiki uses.
+	"apt-get install -y unzip=6.0-29 zip=3.0-15",
 	"curl -sS https://getcomposer.org/installer | php",
-	"php composer.phar self-update 2.1.14", # Pin composer version
+	"php composer.phar self-update 2.10.2", # Pin composer version
 	"php composer.phar install", # Install Composer deps
 	"echo {} > composer.local.json", # Require Semantic MediaWiki locally, so we don't conflict with base MediaWiki's deps
-	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:6.0.1",
+	"COMPOSER=composer.local.json php composer.phar require --no-update mediawiki/semantic-media-wiki:7.2.1",
 	"php composer.phar update -n --no-dev", # Update w/ deps; suppress interactive prompts
     ],
 )
@@ -44,11 +45,17 @@ container_run_and_commit(
 	# that lets the Docker host access test SQLite files
 	"php maintenance/install.php my_wiki admin --dbname my_wiki --pass a-nice-password --dbtype sqlite --server 'http://localhost:8080' --scriptpath '' ",
 	"chown www-data:www-data data data/*",
-	# Enable Semantic MediaWiki and then update MediaWiki to deal with the upgrade
+	# Enable Semantic MediaWiki and then update MediaWiki to deal with the upgrade.
+	# NOTE: as of SMW 7.0.0, enableSemantics() is deprecated and no longer needed,
+	# but $smwgNamespace (which it used to set) is still expected by SMW's
+	# structure test suite, so set it explicitly.
 	"echo 'wfLoadExtension(<<<END' >> LocalSettings.php",
 	"echo 'SemanticMediaWiki' >> LocalSettings.php",
 	"echo 'END);' >> LocalSettings.php",
-	"echo 'enableSemantics();' >> LocalSettings.php",
+	# rules_docker wraps these commands in bash $"..." quoting, where literal $
+	# and " characters get mangled, so build the line ($smwgNamespace = "...";)
+	# with printf octal escapes (\044 = $, \042 = ") instead.
+	"printf '\\044smwgNamespace = \\042http://localhost:8080/id/\\042;\\n' >> LocalSettings.php",
 	"php maintenance/update.php",
 	# Enable testing by installing dev deps
 	"php composer.phar install --dev",
@@ -76,7 +83,7 @@ container_push(
     image = ":release-container",
     registry = "index.docker.io",
     repository = "naimkabir/semantic-mediawiki",
-    tag = "6.0.1",
+    tag = "7.2.1",
     skip_unchanged_digest = True,
     format = "Docker",
 )
