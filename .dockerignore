@@ -1,0 +1,4 @@
+*
+!Dockerfile
+!container/
+!container/init-demo.sh
