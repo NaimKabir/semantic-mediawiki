@@ -1,63 +1,72 @@
-# Semantic Mediawiki Docker Images
+# Semantic MediaWiki Docker Images
 
 [![deploy](https://github.com/NaimKabir/semantic-mediawiki/actions/workflows/deploy.yaml/badge.svg)](https://github.com/NaimKabir/semantic-mediawiki/actions/workflows/deploy.yaml)
 
-A project to continuously release Docker images that are pre-installed with MediaWiki and the Semantic MediaWiki extension. Basic checks are run to verify we're using the latest stable versions of dependencies and that the extension is working correctly.
+Docker images with MediaWiki and Semantic MediaWiki (SMW) pre-installed. The current build targets **SMW 7.3.0**, **MediaWiki 1.43.9 LTS**, and **PHP 8.3**, for Linux AMD64 and ARM64.
 
-Releases are on [**DockerHub**](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki).
+Images are published to [Docker Hub](https://hub.docker.com/r/naimkabir/semantic-mediawiki). Report problems in [GitHub issues](https://github.com/NaimKabir/semantic-mediawiki/issues).
 
-Reach out for support [@kabircreates](https://twitter.com/KabirCreates), or post issues directly to the [**Github repo**](https://github.com/NaimKabir/semantic-mediawiki/issues).
-  
-  
-## Docker Usage
+## Run a wiki
 
-A lot of the installation mess is abstracted away in released Docker images, but unfortunately there's still a lot to do after pulling one.
+After the release workflow publishes this version:
 
-If you want to just play around with a pre-configured, SQLite-based *minimal* install and skip these steps, you can pull a [demo image](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki/tags?page=1&ordering=last_updated&name=demo). It's not recommended that you deploy it anywhere without properly load testing it. 
+```sh
+docker pull naimkabir/semantic-mediawiki:7.3.0
+docker run --name smw -d -p 8080:80 naimkabir/semantic-mediawiki:7.3.0
+```
 
+1. Open `http://localhost:8080` and complete the MediaWiki installer, or supply your existing `LocalSettings.php`. Use persistent storage for your database and uploads; the release image does not contain a configured wiki or database.
+2. Add this line to `LocalSettings.php` (SMW 7 enables semantics when the extension loads):
 
-1. **Pull an image** from the repository. e.g with: `docker pull naimkabir/semantic-mediawiki:7.2.1`
-2. **Run the image** in order to stand up the MediaWiki instance. e.g with: `docker run --name smw -d -p 8080:80 naimkabir/semantic-mediawiki:7.2.1`. By default, the port MediaWiki talks on is port 80, and we map a host port to it.
-3. **Configure MediaWiki** by either going through the [MediaWiki installer process](https://www.mediawiki.org/wiki/Manual:Config_script), or by `docker cp`ing in a `LocalSettings.php` that you already have available. You can also `docker exec` into a running container to run a manual install.
-4. **Enable semantics!** You must add a line to `LocalSettings.php` that looks like: `wfLoadExtension('SemanticMediaWiki');`. Note: as of SMW 4.0.0 and up to SMW 7.0.0 you should also add `enableSemantics('{YOUR_WIKI_SERVER}');` after it (deprecated and unnecessary from 7.0.0 onward); pre-SMW 4.0.0 you should only add `enableSemantics('{YOUR_WIKI_SERVER}')`.
-5. **Run maintenance.** As with all MediaWiki upgrades, you must run maintenance with `php maintenance/update.php` in the root directory of the MediaWiki project.
-6. **Verify the install.** You should be good to go, but you can follow [these steps](https://www.semantic-mediawiki.org/wiki/Help:Verify_the_installation) to verify a correct install.
+   ```php
+   wfLoadExtension('SemanticMediaWiki');
+   ```
 
-## Updating Versions
+3. Copy the configuration into the container and update the schema:
 
-<details>
-  
-  
-The primary purpose of this repo is to release containers with stable installations of Semantic Media Wiki for each release. We also want to use the latest acceptable versions of all dependencies.
+   ```sh
+   docker cp LocalSettings.php smw:/var/www/html/LocalSettings.php
+   docker exec smw php maintenance/run.php update --quick
+   ```
 
-This is currently done via a janky-but-functional method of software version-tracking and rebuilding Docker containers. If you see that one of these dependencies is out-of-date, you can follow these steps to release a new container to [**DockerHub**](https://hub.docker.com/repository/docker/naimkabir/semantic-mediawiki):
+4. Check `Special:Version` and `Special:SemanticMediaWiki`.
 
-1. Clone this repo: `git clone https://github.com/NaimKabir/semantic-mediawiki.git`.
-2. Checkout a new branch. 
-3. In your branch, update versions in `versions.jinja` in the directory root.
-4. In your branch, run `./update_versions.py` in the directory root. When you `git diff` you should see relevant changes. This step will require you to install python dependencies, e.g with `pip install -r requirements.txt`.
-5. Push your branch with this repo as the upstream source, and open a Pull Request (PR). This will trigger tests. If they pass and the PR is approved, it will be merged to master. Upon merge, a new container will be built and released.
-</details>
+For upgrades, back up your database, configuration, and uploads, and follow the [SMW release notes](https://github.com/SemanticMediaWiki/SemanticMediaWiki/blob/7.3.0/docs/releasenotes/RELEASE-NOTES-7.3.0.md) and [MediaWiki upgrade instructions](https://www.mediawiki.org/wiki/Manual:Upgrading). Wikis using URL, Annotation URI, or Email properties should run `php maintenance/run.php SemanticMediaWiki:rebuildData` after upgrading to SMW 7.3.0.
 
-## Tests
+## Try the demo
 
-<details>
-  
-  
-To ensure a correct install I run `phpunit` tests that come packaged with the Semantic MediaWiki install.
+```sh
+docker run --name smw-demo -d -p 127.0.0.1:8080:80 naimkabir/semantic-mediawiki:7.3.0-demo
+```
 
-The test suites I run are:
-1. `semantic-mediawiki-unit`
-2. `semantic-mediawiki-integration`
-3. `semantic-mediawiki-check`
-4. `semantic-mediawiki-structure`
-  
-I exclude some tests that are failing on Semantic MediaWiki master, but my testing should at the very least help protect against regressions. For details on what tests are run (and which are hackily excluded), you can check out the `container/tests` directory.
-  
-You can run them with: `bazel test //...`. This will require Bazel, which I like installing with [Bazelisk](https://github.com/bazelbuild/bazelisk) (the version is pinned in `.bazelversion`).
+Open `http://localhost:8080`. Login: **Admin / smw-demo-password**. This disposable SQLite demo has a public password and a fixed localhost URL; use it only for local evaluation. Its database is inside the container and is lost when the container is removed.
 
-Note: the `//container:test` target needs a Docker daemon using the classic image store (as on CI). With Docker Desktop's containerd image store enabled, rules_docker's incremental image loader fails (`failed to resolve layers`) because the containerd store doesn't support loading partial tarballs that reference already-known layers; either disable the containerd image store in Docker Desktop settings, or run the test suites manually inside the image (e.g. `docker run --rm -e MW_INSTALL_PATH=/var/www/html --entrypoint php <test-image> composer.phar phpunit -n -d extensions/SemanticMediaWiki -- --testsuite semantic-mediawiki-structure`).
-  
-In addition I also do some basic checks for loaded extensions and proper dependency versions.
-</details>
+## Build and test locally
 
+Docker with BuildKit/buildx is required. The registry regression test also needs permission to run privileged Docker-in-Docker containers. No Bazel or Python packages are needed.
+
+```sh
+docker build --target release -t smw:local .
+container/tests/smoke.sh smw:local
+
+# Optional preconfigured demo:
+docker build --target demo -t smw:demo .
+container/tests/smoke.sh smw:demo demo
+
+# Full packaging regression test (starts a temporary local registry):
+container/tests/registry.sh
+```
+
+The smoke test installs a temporary SQLite wiki, loads SMW, updates the database, saves a semantic annotation, runs jobs, and queries it through the HTTP API. It removes its test container when finished. The registry test builds and pushes both targets with an isolated BuildKit builder, pulls them into a fresh Docker-in-Docker daemon, and runs the smoke test against each pulled image. The separate image stores ensure cached layers cannot hide extraction failures; all temporary containers, volumes, and networks are removed afterward. CI runs this on native AMD64 and ARM64 runners.
+
+## Update and publish
+
+Edit the version arguments in `Dockerfile`. Pin base images to their multi-platform index digests, and choose a MediaWiki version supported by the [SMW compatibility matrix](https://github.com/SemanticMediaWiki/SemanticMediaWiki/blob/7.3.0/docs/COMPATIBILITY.md). Run the registry test and update these instructions.
+
+The build also updates Guzzle to 7.15.2, matching the patched pin on MediaWiki’s `REL1_43` maintenance branch, and fails if `composer audit --no-dev` reports vulnerable production dependencies. Revisit that override when updating MediaWiki.
+
+Branch pushes and pull requests run the tests, including on subsequent commits. Pushes to `main` (or a manual deployment workflow run) test first, then publish the version tag and `latest`, plus the versioned demo tag and `demo`. The workflow uses the existing `DOCKER_HUB_USERNAME` and `DOCKER_HUB_ACCESS_TOKEN` secrets. The SMW tag comes directly from `Dockerfile`.
+
+### Why the build changed
+
+The old `rules_docker` path depended on unavailable helpers and could publish gzip-compressed layers labeled as uncompressed OCI tar layers. Docker rejected the published `7.2.1` image with `archive/tar: invalid tar header`; the old `latest` tag still contained SMW 4.0.0. Native BuildKit now builds and publishes images without converting `docker save` archives through the archived Bazel rules. The registry round-trip test guards against that packaging regression.

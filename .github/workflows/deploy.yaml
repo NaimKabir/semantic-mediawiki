@@ -1,46 +1,47 @@
-name: deploy 
-on: 
+name: deploy
+on:
   push:
-    branches:
-     - main
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: docker-release
+  cancel-in-progress: false
 jobs:
-  test-and-deploy:
-    runs-on: ubuntu-latest
+  test:
+    uses: ./.github/workflows/pr.yaml
+  deploy:
+    needs: test
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        
-      - name: Bazel cache
-        id: bazel-cache
-        uses: actions/cache@v4
-        env:
-          version: 4.2.1
-        with:
-          path: | 
-            ~/.cache/bazel
-          key: ${{ runner.os }}-{{ env.version }}-bazel-cache
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      - name: Install bazelisk
-        run: |
-          curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.1.0/bazelisk-linux-amd64"
-          mkdir -p "${GITHUB_WORKSPACE}/bin/"
-          mv bazelisk-linux-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
-          chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
-
-      - name: Run tests
-        run: bazel test //...
-
-      - name: Deploying current release
-        run: bazel run //container:release
-
-      - name: Deploying current release with default tag
-        run: bazel run //container:release-latest
-
-      - name: Deploying Demo container
-        run: bazel run //container:demo
+      - name: Read release version
+        id: version
+        run: echo "smw=$(sed -n 's/^ARG SMW_VERSION=//p' Dockerfile)" >> "$GITHUB_OUTPUT"
+      - name: Publish release
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: release
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            naimkabir/semantic-mediawiki:${{ steps.version.outputs.smw }}
+            naimkabir/semantic-mediawiki:latest
+      - name: Publish demo
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: demo
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            naimkabir/semantic-mediawiki:${{ steps.version.outputs.smw }}-demo
+            naimkabir/semantic-mediawiki:demo
