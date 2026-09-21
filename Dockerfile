@@ -14,7 +14,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 # Keep MediaWiki's dependency constraints and merge SMW through its supported
 # composer.local.json mechanism. Explicitly allow the extension installer.
-RUN printf '{"require":{"mediawiki/semantic-media-wiki":"%s"}}\n' "$SMW_VERSION" > composer.local.json \
+# The base web root is mode 1777, while composer.json belongs to UID 1000.
+# Ubuntu fs.protected_regular blocks Composer's O_CREAT writes there even as
+# root. Use normal directory permissions instead of weakening host sysctls.
+RUN chmod 0755 /var/www/html \
+    && printf '{"require":{"mediawiki/semantic-media-wiki":"%s"}}\n' "$SMW_VERSION" > composer.local.json \
     && COMPOSER_ALLOW_SUPERUSER=1 composer config allow-plugins.composer/installers true \
     && COMPOSER_ALLOW_SUPERUSER=1 composer require --no-update "guzzlehttp/guzzle:${GUZZLE_VERSION}" \
     && COMPOSER_ALLOW_SUPERUSER=1 composer update --no-dev --prefer-dist --no-interaction --optimize-autoloader \
